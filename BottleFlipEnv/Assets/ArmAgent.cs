@@ -28,8 +28,8 @@ public class ArmAgent : Agent
     Quaternion bottleRot;
 
     bool releasedBottle;
-    int flipCount;
-    bool canCountFlips;
+    float flipAmount;
+    Quaternion prevRot;
 
     void Start()
     {
@@ -59,10 +59,9 @@ public class ArmAgent : Agent
     // Reset scene environment setup for episode start
     public override void OnEpisodeBegin()
     {
-        // Start with bottle unreleased and zero bottle flips each episode
+        // Start with bottle unreleased and zero bottle flip degrees each episode
         releasedBottle = false;
-        flipCount = 0;
-        canCountFlips = true;
+        flipAmount = 0;
 
         // Initialize/reset the arm and hand joints to have target velocity of zero
         JointMotor armMotor = armHinge.motor;
@@ -93,28 +92,37 @@ public class ArmAgent : Agent
         bottle.transform.position = bottlePos;
         bottle.transform.rotation = bottleRot;
 
+        // Initialize the previous rotation of the bottle to the starting rotation of the bottle
+        prevRot = bottleRot;
+
         // Add and get the joint holding the bottle to the hand
-        bottleJoint = bottle.AddComponent<FixedJoint>();
-        bottleJoint.connectedBody = handRb;
+        if (bottleJoint == null)
+        {
+            bottleJoint = bottle.AddComponent<FixedJoint>();
+            bottleJoint.connectedBody = handRb;
+        }
     }
 
     // Get observations about the current state (arm hinge vel, hand hinge vel, bottle x pos, bottle y pos)
     public override void CollectObservations(VectorSensor sensor)
     {
-        sensor.AddObservation(armHinge.motor.targetVelocity);       // Current target velocity of arm
-        sensor.AddObservation(handHinge.motor.targetVelocity);      // Current target velocity of hand
-        sensor.AddObservation(bottle.transform.localPosition.x);    // Current x location of bottle
-        sensor.AddObservation(bottle.transform.localPosition.y);    // Current y location of bottle
+        sensor.AddObservation(armHinge.angle);      // Current angle of arm relative to joint (degrees)
+        sensor.AddObservation(armHinge.velocity);   // Current angular velocity of arm around joint (degrees/second)
+        sensor.AddObservation(handHinge.angle);     // Current angle of hand relative to joint (degrees)
+        sensor.AddObservation(handHinge.velocity);  // Current angular velocity of hand around joint (degrees/second)
     }
 
     // Receive actions, utilize them, and apply rewards
     public override void OnActionReceived(ActionBuffers actionBuffers)
     {
+        JointMotor armMotor;
+        JointMotor handMotor;
+
         // If the max number of steps has been reached, end episode and give negative reward
-        if (StepCount >= 500)
+        if (StepCount >= 600)
         {
-            SetReward(-20.0f);
-            Debug.Log("Reward = -20");
+            SetReward(-10.0f);
+            Debug.Log("Reward = -10");
             EndEpisode();
         }
 
@@ -123,7 +131,7 @@ public class ArmAgent : Agent
         {
 
             // Change the target velocity of the arm hinge based on the corresponding action
-            JointMotor armMotor = armHinge.motor;
+            armMotor = armHinge.motor;
             if (actionBuffers.DiscreteActions[0] == 1)
             {
                 armMotor.targetVelocity += 1;
@@ -134,7 +142,7 @@ public class ArmAgent : Agent
             armHinge.motor = armMotor;
 
             // Change the target velocity of the hand hinge based on the corresponding action
-            JointMotor handMotor = handHinge.motor;
+            handMotor = handHinge.motor;
             if (actionBuffers.DiscreteActions[1] == 1)
             {
                 handMotor.targetVelocity += 1;
@@ -150,6 +158,9 @@ public class ArmAgent : Agent
             {
                 Destroy(bottleJoint);
                 releasedBottle = true;
+
+                SetReward((Mathf.Abs(armHinge.velocity) + Mathf.Abs(handHinge.velocity)) / 50 - 1);
+                Debug.Log("Reward = " + ((Mathf.Abs(armHinge.velocity) + Mathf.Abs(handHinge.velocity)) / 50 - 1));
             }
         }
         // If the bottle has been released, then just apply rewards for flipping/landing before ending the episode
@@ -158,34 +169,37 @@ public class ArmAgent : Agent
             // If the bottle is no longer moving after release, end the episode
             if (bottleRb.velocity.magnitude + bottleRb.angularVelocity.magnitude < 0.01)
             {
+                float flipReward = Mathf.Abs(flipAmount) / 10;
+
                 // If the bottle lands upright after flipping, give the agent a big reward
-                if (flipCount > 0 && Vector3.Dot(bottle.transform.up, Vector3.up) > 0.95)
+                if (Mathf.Abs(flipAmount) > 180 && Vector3.Dot(bottle.transform.up, Vector3.up) > 0.95)
                 {
-                    SetReward(+100.0f);
-                    Debug.Log("Reward = +100");
+                    SetReward(+100000.0f + flipReward);
+                    Debug.Log("Reward = " + (+100000.0f + flipReward));
                 }
                 // Otherwise, penalize the agent for failing a bottle flip
                 else
                 {
-                    SetReward(-10.0f);
-                    Debug.Log("Reward = -10");
+                    SetReward(-8.0f + flipReward);
+                    Debug.Log("Reward = " + (-8.0f + flipReward));
                 }
                 EndEpisode();
             }
-            // If the bottle is upside down and the flip counter is enabled, add to the flip count and disable the flip counter to avoid double counting
-            else if (canCountFlips && Vector3.Dot(bottle.transform.up, Vector3.down) > 0.95)
+            // Add to the flip amount the difference in degrees from the previous rotation to the current rotation in the XY plane.
+            else
             {
-                flipCount++;
-                Debug.Log("Reward = +5");
-                SetReward(+5.0f);
-                canCountFlips = false;
-            }
-            // If the bottle is right side up, re-enable the flip counter
-            else if (!canCountFlips && Vector3.Dot(bottle.transform.up, Vector3.up) > 0.95)
-            {
-                canCountFlips = true;
+                Vector3 curUp = bottle.transform.rotation * Vector3.up;
+                Vector3 prevUp = prevRot * Vector3.up;
+
+                float curAng = Mathf.Atan2(curUp.x, curUp.y) * Mathf.Rad2Deg;
+                float prevAng = Mathf.Atan2(prevUp.x, prevUp.y) * Mathf.Rad2Deg;
+
+                flipAmount += Mathf.DeltaAngle(curAng, prevAng);
             }
         }
+
+        // Update the previous rotation of the bottle to the current rotation of the bottle
+        prevRot = bottle.transform.rotation;
     }
 
     public override void Heuristic(in ActionBuffers actionsOut)

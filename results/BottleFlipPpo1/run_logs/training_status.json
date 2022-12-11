@@ -1,0 +1,65 @@
+{
+    "BottleFlipEnv": {
+        "checkpoints": [
+            {
+                "steps": 3499984,
+                "file_path": "results\\BottleFlipPpo1\\BottleFlipEnv\\BottleFlipEnv-3499984.onnx",
+                "reward": 49.13437275091807,
+                "creation_time": 1670567143.5477521,
+                "auxillary_file_paths": [
+                    "results\\BottleFlipPpo1\\BottleFlipEnv\\BottleFlipEnv-3499984.pt"
+                ]
+            },
+            {
+                "steps": 3999984,
+                "file_path": "results\\BottleFlipPpo1\\BottleFlipEnv\\BottleFlipEnv-3999984.onnx",
+                "reward": 26.626537799835205,
+                "creation_time": 1670571579.244159,
+                "auxillary_file_paths": [
+                    "results\\BottleFlipPpo1\\BottleFlipEnv\\BottleFlipEnv-3999984.pt"
+                ]
+            },
+            {
+                "steps": 4499961,
+                "file_path": "results\\BottleFlipPpo1\\BottleFlipEnv\\BottleFlipEnv-4499961.onnx",
+                "reward": 82.50102796325575,
+                "creation_time": 1670576022.1580822,
+                "auxillary_file_paths": [
+                    "results\\BottleFlipPpo1\\BottleFlipEnv\\BottleFlipEnv-4499961.pt"
+                ]
+            },
+            {
+                "steps": 4999952,
+                "file_path": "results\\BottleFlipPpo1\\BottleFlipEnv\\BottleFlipEnv-4999952.onnx",
+                "reward": 75.51287150460911,
+                "creation_time": 1670580487.8038282,
+                "auxillary_file_paths": [
+                    "results\\BottleFlipPpo1\\BottleFlipEnv\\BottleFlipEnv-4999952.pt"
+                ]
+            },
+            {
+                "steps": 5000003,
+                "file_path": "results\\BottleFlipPpo1\\BottleFlipEnv\\BottleFlipEnv-5000003.onnx",
+                "reward": 75.12917255816922,
+                "creation_time": 1670580487.9398522,
+                "auxillary_file_paths": [
+                    "results\\BottleFlipPpo1\\BottleFlipEnv\\BottleFlipEnv-5000003.pt"
+                ]
+            }
+        ],
+        "final_checkpoint": {
+            "steps": 5000003,
+            "file_path": "results\\BottleFlipPpo1\\BottleFlipEnv.onnx",
+            "reward": 75.12917255816922,
+            "creation_time": 1670580487.9398522,
+            "auxillary_file_paths": [
+                "results\\BottleFlipPpo1\\BottleFlipEnv\\BottleFlipEnv-5000003.pt"
+            ]
+        }
+    },
+    "metadata": {
+        "stats_format_version": "0.3.0",
+        "mlagents_version": "0.30.0",
+        "torch_version": "1.7.1+cu110"
+    }
+}
