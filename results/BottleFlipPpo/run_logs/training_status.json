@@ -1,0 +1,47 @@
+{
+    "BottleFlipEnv": {
+        "checkpoints": [
+            {
+                "steps": 499981,
+                "file_path": "results\\BottleFlipPpo\\BottleFlipEnv\\BottleFlipEnv-499981.onnx",
+                "reward": -13.918914835331803,
+                "creation_time": 1670533215.4469042,
+                "auxillary_file_paths": [
+                    "results\\BottleFlipPpo\\BottleFlipEnv\\BottleFlipEnv-499981.pt"
+                ]
+            },
+            {
+                "steps": 717611,
+                "file_path": "results\\BottleFlipPpo\\BottleFlipEnv\\BottleFlipEnv-717611.onnx",
+                "reward": 5.4415654022986955,
+                "creation_time": 1670535359.3853242,
+                "auxillary_file_paths": [
+                    "results\\BottleFlipPpo\\BottleFlipEnv\\BottleFlipEnv-717611.pt"
+                ]
+            },
+            {
+                "steps": 762039,
+                "file_path": "results\\BottleFlipPpo\\BottleFlipEnv\\BottleFlipEnv-762039.onnx",
+                "reward": 7.141496637132433,
+                "creation_time": 1670535855.8656828,
+                "auxillary_file_paths": [
+                    "results\\BottleFlipPpo\\BottleFlipEnv\\BottleFlipEnv-762039.pt"
+                ]
+            }
+        ],
+        "final_checkpoint": {
+            "steps": 762039,
+            "file_path": "results\\BottleFlipPpo\\BottleFlipEnv.onnx",
+            "reward": 7.141496637132433,
+            "creation_time": 1670535855.8656828,
+            "auxillary_file_paths": [
+                "results\\BottleFlipPpo\\BottleFlipEnv\\BottleFlipEnv-762039.pt"
+            ]
+        }
+    },
+    "metadata": {
+        "stats_format_version": "0.3.0",
+        "mlagents_version": "0.30.0",
+        "torch_version": "1.7.1+cu110"
+    }
+}
