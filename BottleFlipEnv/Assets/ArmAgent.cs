@@ -43,7 +43,7 @@ public class ArmAgent : Agent
         handRb = hand.GetComponent<Rigidbody>();
         bottleRb = bottle.GetComponent<Rigidbody>();
 
-        // Get the hinges controlling the arm and hand
+        // Get the hinges controlling the arm and the hand
         armHinge = arm.GetComponent<HingeJoint>();
         handHinge = hand.GetComponent<HingeJoint>();
 
