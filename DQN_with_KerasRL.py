@@ -22,7 +22,6 @@ import datetime
 from rl.agents.dqn import DQNAgent
 from rl.policy import BoltzmannQPolicy
 from rl.memory import SequentialMemory
-import WandbLogger
 
 
 channel = EngineConfigurationChannel()
