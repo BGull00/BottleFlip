@@ -14,12 +14,12 @@ channel.set_configuration_parameters(time_scale=50.0)
 unity_env = UnityEnvironment(side_channels=[channel])
 env = UnityToGymWrapper(unity_env)
 
-# Set up for TensorBoard - not currently working
+# Set up for TensorBoard
 current_time = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
 train_log_dir = "a2c_results/fit-" + current_time
-# train_tb = tf.keras.callbacks.TensorBoard(log_dir=train_log_dir, histogram_freq=1)
 
-model = A2C("MlpPolicy", env, verbose=1, tensorboard_log=train_log_dir)
+# Do the training
+model = A2C("MlpPolicy", env, learning_rate=0.00003, use_rms_prop=False, verbose=1, tensorboard_log=train_log_dir)
 model.learn(total_timesteps=15000000)
 model.save("A2C_BottleFlipEnv")
 
